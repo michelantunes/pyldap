@@ -9,5 +9,5 @@ setup(name='pyldap',
       author_email='michelantunesdasilva@gmail.com',
       url='http://github.com/michelantunes/pyldap',
       packages=['pyldap','pyldap.control'],
-      package_dir={'pyldap': 'src/pyldap','pyldap.control': 'src/pyldap/control'},
+      package_dir={'pyldap': 'pyldap','pyldap.control': 'pyldap/control'},
      )
