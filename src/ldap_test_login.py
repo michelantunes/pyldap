@@ -1,13 +1,21 @@
 __author__ = 'michelantunes'
-from ldapauth.ldapmanager import LdapManager
-from ldapauth.ldapmodel import LdapConfiguration, LdapUser
+from pyldap.control.ldapmanager import LdapManager
+from pyldap.ldapmodel import LdapConfiguration, LdapUser
+import getpass, sys
 
 ldapConfig = LdapConfiguration("ldap://ldap:389","dc=corp, dc=br")
 
 #user = raw_input("Informe usuario:")
-user = "name"
+user = "michelantunes"
 #secret = raw_input("Informe senha:")
-secret = ""
+
+if sys.stdin.isatty():
+    secret = getpass.getpass('Informe a senha: ')
+else:
+    print 'Informe a senha:'
+    secret = sys.stdin.readline().rstrip()
+
+#secret = ""
 
 ldapUser = LdapUser(user, secret)
 

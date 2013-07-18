@@ -1,6 +1,6 @@
 __author__ = 'michelantunes'
 import ldap
-from ldapauth.ldapmodel import LdapAttrib #LdapConfiguration, LdapUser
+from pyldap.ldapmodel import LdapAttrib #LdapConfiguration, LdapUser
 
 class LdapManager:
     '''
@@ -16,7 +16,7 @@ class LdapManager:
         try:
 	        ## l = ldap.initialize('ldap://mmldap:389')
             l = ldap.initialize(ldapConfig.getUrl())
-
+            
             ## searching doesn't require a bind in LDAP V3.  If you're using LDAP v2, set the next line appropriately
 	        ## and do a bind as shown in the above example.
 	        ## you can also set this to ldap.VERSION2 if you're using a v2 directory
@@ -66,14 +66,16 @@ class LdapManager:
         result_arr = self.search(ldapConfig, searchScope, searchFilter)
 
         ## TODO mudar exception
-        if (result_arr == []):
-            return RuntimeError
+        if (result_arr == []) or (result_arr is None):
+            print "IF []"
+            raise RuntimeError
         elif (result_arr.__len__() == 1):
             print "Length = 1"
             print result_arr[0][0][0]
             return result_arr[0][0][0]
         else:
-            return RuntimeError
+            print "ELSE"
+            raise RuntimeError
 
     def login(self, ldapConfig, ldapUser):
         try:
@@ -84,9 +86,10 @@ class LdapManager:
 
         try:
             test = l.simple_bind_s(ldapUser.getUid(), ldapUser.getSecret())
-            print test
+            #print str(test)
             ldap_who = l.whoami_s()
-            print ldap_who
+            print "\nSuccessful Logon!!\n USER: " + str(ldap_who)
+
         except ldap.INVALID_CREDENTIALS, inv_cred:
             print inv_cred
         finally:
