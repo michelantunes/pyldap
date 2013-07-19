@@ -70,8 +70,8 @@ class LdapManager:
             print "IF []"
             raise LdapUserNotFind("Do not find user: "+ldapUser.getUser())
         elif (result_arr.__len__() == 1):
-            print "Length = 1  ==>  "+result_arr
-            print result_arr[0][0][0]
+            print "Length = 1  ==>  "+str(result_arr)
+            #print result_arr[0][0][0]
             return result_arr[0][0][0]
         else:
             print "ELSE"
