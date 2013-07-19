@@ -19,8 +19,4 @@ else:
 
 ldapUser = LdapUser(user, secret)
 
-result_uid = LdapManager().search_auth_user(ldapConfig,ldapUser)
-
-ldapUser.setUid(result_uid)
-
 LdapManager().login(ldapConfig, ldapUser)

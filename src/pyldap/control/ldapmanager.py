@@ -1,6 +1,7 @@
 __author__ = 'michelantunes'
 import ldap
 from pyldap.ldapmodel import LdapAttrib #LdapConfiguration, LdapUser
+from pyldap.ldapexception import LdapUserNotFind
 
 class LdapManager:
     '''
@@ -26,8 +27,7 @@ class LdapManager:
             l.protocol_version = ldapConfig.getLdapVersion()
 
         except ldap.LDAPError, e:
-	        print e
-	        ## handle error however you like
+            raise
 
         ## The next lines will also need to be changed to support your search requirements and directory
         ## baseDN = "dc=gov, dc=br"
@@ -54,11 +54,11 @@ class LdapManager:
             #print result_set
             return result_set
         except ldap.LDAPError, e:
-            print e
+            raise
         finally:
             l.unbind_s()
 
-    def search_auth_user(self, ldapConfig, ldapUser):
+    def __search_auth_user(self, ldapConfig, ldapUser):
         print "search_auth_user - init"
         searchScope = ldap.SCOPE_SUBTREE
         searchFilter = LdapAttrib.USER+"="+ ldapUser.getUser()
@@ -68,21 +68,25 @@ class LdapManager:
         ## TODO mudar exception
         if (result_arr == []) or (result_arr is None):
             print "IF []"
-            raise RuntimeError
+            raise LdapUserNotFind("Do not find user: "+ldapUser.getUser())
         elif (result_arr.__len__() == 1):
-            print "Length = 1"
+            print "Length = 1  ==>  "+result_arr
             print result_arr[0][0][0]
             return result_arr[0][0][0]
         else:
             print "ELSE"
-            raise RuntimeError
+            raise LdapSearchException("A search error occurred. Result: "+result_arr)
 
     def login(self, ldapConfig, ldapUser):
+        
+        # Searching for user id
+        result_uid = LdapManager().__search_auth_user(ldapConfig,ldapUser)
+        ldapUser.setUid(result_uid)
+
         try:
             l = ldap.initialize(ldapConfig.getUrl())
         except ldap.LDAPError, e:
-            ## TODO tratar melhor
-	        print e
+	        raise
 
         try:
             test = l.simple_bind_s(ldapUser.getUid(), ldapUser.getSecret())
@@ -91,6 +95,7 @@ class LdapManager:
             print "\nSuccessful Logon!!\n USER: " + str(ldap_who)
 
         except ldap.INVALID_CREDENTIALS, inv_cred:
-            print inv_cred
+            #print inv_cred
+            raise
         finally:
             l.unbind_s()
