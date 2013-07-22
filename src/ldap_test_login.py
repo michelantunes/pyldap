@@ -1,5 +1,5 @@
 __author__ = 'michelantunes'
-from pyldap.control.ldapmanager import LdapManager
+from pyldap.control.ldapoperations import LdapOperations
 from pyldap.ldapmodel import LdapConfiguration, LdapUser
 import getpass, sys
 
@@ -19,4 +19,4 @@ else:
 
 ldapUser = LdapUser(user, secret)
 
-LdapManager().login(ldapConfig, ldapUser)
+LdapOperations().login(ldapConfig, ldapUser)
